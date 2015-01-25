@@ -1,4 +1,4 @@
-﻿// Code from Normmatt's texuripper (with permission)
+﻿// Code from Normmatt's texturipper (with permission)
 using System;
 using System.Drawing;
 

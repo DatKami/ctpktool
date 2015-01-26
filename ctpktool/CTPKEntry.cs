@@ -149,6 +149,9 @@ namespace ctpktool
 
             if (!String.IsNullOrWhiteSpace(dir))
             {
+                if (!String.IsNullOrWhiteSpace(outputFolder))
+                    dir = Path.Combine(outputFolder, dir);
+
                 filename = Path.Combine(dir, filename);
 
                 if (!Directory.Exists(dir))

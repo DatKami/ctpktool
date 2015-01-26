@@ -198,7 +198,14 @@ namespace ctpktool
                     reader.Read(file._entries[i].TextureRawData, 0, (int)file._entries[i].TextureSize);
                 }
 
+                string basePath = Path.GetDirectoryName(filename);
                 string baseFilename = Path.GetFileNameWithoutExtension(filename);
+
+                if (!String.IsNullOrWhiteSpace(basePath))
+                {
+                    baseFilename = Path.Combine(basePath, baseFilename);
+                }
+
                 for (int i = 0; i < file.NumberOfTextures; i++)
                 {
                     Console.WriteLine("Converting {0}...", file._entries[i].InternalFilePath);

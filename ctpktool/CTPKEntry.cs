@@ -90,15 +90,42 @@ namespace ctpktool
             CTPKEntry entry = new CTPKEntry();
 
             var pathOffset = reader.ReadInt32();
+
+            Console.WriteLine("Path offset \t\t{0}\t:{0:X}", pathOffset);
+
             entry.TextureSize = reader.ReadUInt32();
+
+            Console.WriteLine("Texture size \t\t{0}\t:{0:X}", entry.TextureSize);
+
             entry.TextureOffset = reader.ReadUInt32();
+
+            Console.WriteLine("Texture offset \t\t{0}\t:{0:X}", entry.TextureOffset);
+
             entry.Format = reader.ReadUInt32();
+
+            Console.WriteLine("Texture format \t\t{0}\t:{0:X}", entry.Format);
+
             entry.Width = reader.ReadUInt16();
+
+            Console.WriteLine("Texture width \t\t{0}\t:{0:X}", entry.Width);
+
             entry.Height = reader.ReadUInt16();
+
+            Console.WriteLine("Texture height \t\t{0}\t:{0:X}", entry.Height);
+
             entry.MipLevel = reader.ReadByte();
+
+            Console.WriteLine("Texture miplevel \t{0}\t:{0:X}", entry.MipLevel);
+
             entry.Type = reader.ReadByte();
+
+            Console.WriteLine("Texture type \t\t{0}\t:{0:X}", entry.Type);
+
             entry.Unknown = reader.ReadUInt16();
             entry.BitmapSizeOffset = reader.ReadUInt32();
+
+            Console.WriteLine("Bitmap size offset \t{0}\t:{0:X}", entry.BitmapSizeOffset);
+
             entry.FileTime = reader.ReadUInt32();
             
             #region Read path string

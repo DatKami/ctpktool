@@ -155,17 +155,39 @@ namespace ctpktool
                     Console.WriteLine("ERROR: Not a valid CTPK file.");
                 }
 
+                Console.WriteLine();
+
                 file.Version = reader.ReadUInt16();
+
+                Console.WriteLine("CTPK Version \t\t{0}\t:{0:X}", file.Version);
+
                 file.NumberOfTextures = reader.ReadUInt16();
+
+                Console.WriteLine("Number of textures \t{0}\t:{0:X}", file.NumberOfTextures);
+
                 file.TextureSectionOffset = reader.ReadUInt32();
+
+                Console.WriteLine("Texture section offset \t{0}\t:{0:X}", file.TextureSectionOffset);
+
                 file.TextureSectionSize = reader.ReadUInt32();
+
+                Console.WriteLine("Texture section size \t{0}\t:{0:X}", file.TextureSectionSize);
+
                 file.HashSectionOffset = reader.ReadUInt32();
+
+                Console.WriteLine("Hash section offset \t{0}\t:{0:X}", file.HashSectionOffset);
+
                 file.TextureInfoSection = reader.ReadUInt32();
+
+                Console.WriteLine("Texture \t\t{0}\t:{0:X}", file.TextureInfoSection);
 
                 // Section 1 + 3
                 for (int i = 0; i < file.NumberOfTextures; i++)
                 {
                     reader.BaseStream.Seek(0x20 * (i + 1), SeekOrigin.Begin);
+
+                    Console.WriteLine();
+                    Console.WriteLine("Extracting texture {0}...", i + 1);
 
                     CTPKEntry entry = CTPKEntry.Read(reader);
                     file._entries.Add(entry);

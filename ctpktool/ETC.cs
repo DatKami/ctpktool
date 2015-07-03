@@ -1,6 +1,7 @@
 ﻿// Code from Normmatt's texturipper (with permission)
 using System;
 using System.Drawing;
+using System.IO;
 
 namespace ctpktool
 {
@@ -47,7 +48,9 @@ namespace ctpktool
     {
       int num1 = x / 4;
       int num2 = y / 4;
-      return ((x / 8 + y / 8 * (size.Width / 8)) * 4 + (num1 & 1) + (num2 & 1) * 2) * (hasAlpha ? 16 : 8);
+      int blockStart = ((x / 8 + y / 8 * (size.Width / 8)) * 4 + (num1 & 1) + (num2 & 1) * 2) * (hasAlpha ? 16 : 8);
+      //if (x == 0) Console.WriteLine(": Offset {0}: (({1} + {2} * {3}) * 4 + {4} + {5} * 2) * {6} ", blockStart, x/8, y/8, (size.Width / 8), (num1 & 1), (num2 & 1), (hasAlpha ? 16 : 8));
+        return blockStart;
     }
 
     public static int GetEtc1Length(Size size, bool hasAlpha, int levels = 1)
@@ -224,13 +227,28 @@ namespace ctpktool
       int x = 0;
       while (x != width)
       {
+
+        //if (x == 444 && y < 756) Console.WriteLine("Block {0}", y * 256 + x); //blockS????
+
         int index1 = y & 3;
+
         int etc1BlockStart = GetEtc1BlockStart(size, x, y, hasAlpha);
-        const ulong num2 = 0UL;
+
+                MemoryStream dataStream = new MemoryStream(imageData);
+                BinaryReader reader = new BinaryReader(dataStream);
+                reader.BaseStream.Seek(etc1BlockStart, SeekOrigin.Begin);
+
+        ulong original1 = reader.ReadUInt64();
+        ulong original2 = reader.ReadUInt64();
+
+                reader.Close();
+
+                const ulong num2 = 0UL;
         ulong num3 = !hasAlpha ? ulong.MaxValue : num2 | imageData[etc1BlockStart] | (ulong) imageData[etc1BlockStart + 1] << 8 | (ulong) imageData[etc1BlockStart + 2] << 16 | (ulong) imageData[etc1BlockStart + 3] << 24 | (ulong) imageData[etc1BlockStart + 4] << 32 | (ulong) imageData[etc1BlockStart + 5] << 40 | (ulong) imageData[etc1BlockStart + 6] << 48 | (ulong) imageData[etc1BlockStart + 7] << 56;
         ulong num4 = 0UL | imageData[etc1BlockStart + num1] | (ulong) imageData[etc1BlockStart + num1 + 1] << 8 | (ulong) imageData[etc1BlockStart + num1 + 2] << 16 | (ulong) imageData[etc1BlockStart + num1 + 3] << 24 | (ulong) imageData[etc1BlockStart + num1 + 4] << 32 | (ulong) imageData[etc1BlockStart + num1 + 5] << 40 | (ulong) imageData[etc1BlockStart + num1 + 6] << 48 | (ulong) imageData[etc1BlockStart + num1 + 7] << 56;
         bool flag1 = ((long) num4 & 4294967296L) != 0L;
         bool flag2 = ((long) num4 & 8589934592L) != 0L;
+
         uint num5 = (uint) (num4 >> 37 & 7UL);
         uint num6 = (uint) (num4 >> 34 & 7UL);
         int num7;
@@ -239,6 +257,22 @@ namespace ctpktool
         int num10;
         int num11;
         int num12;
+              /*
+                if (x == 444 && y < 756)
+                    Console.Write("Original:\n{0}\n{1}\nLast two bits of y: {2}\n{3}\n{4}\nFlag 1 (2/33): {5}; \tFlag 2 (2/34): {6}\n" +
+                  "Num5(2/38-40): {7}\tNum6(2/35-37): {8}\n",
+              padLong(Convert.ToString((long)original1, 2), 64),
+              padLong(Convert.ToString((long)original2, 2), 64),
+              padLong(Convert.ToString(index1, 2), 2),
+              padLong(Convert.ToString((long)num3, 2), 64),
+              padLong(Convert.ToString((long)num4, 2), 64),
+              flag1,
+              flag2,
+              padLong(Convert.ToString((long)num5, 2), 3),
+              padLong(Convert.ToString((long)num6, 2), 3)
+              );
+
+              */
         if (flag2)
         {
           sbyte num13 = (sbyte) ((long) (num4 >> 56) & 7L);
@@ -346,5 +380,16 @@ namespace ctpktool
             return max;
         return value;
     }
+
+   public static String padLong(string binaryString, int toPad)
+   {
+        string initString = binaryString;
+        int initLength = toPad - binaryString.Length;
+        for (int x = 0; x < initLength; x++)
+        {
+            initString = "0" + initString;
+        }
+        return initString;
+   }
   }
 }

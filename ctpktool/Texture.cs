@@ -166,6 +166,7 @@ namespace ctpktool
             {
                 for (int x = 0; x < Width; x += 8)
                 {
+                    Console.WriteLine("Writing chunk {0}x{1}", x, y);
                     for (int k = 0; k < 8 * 8; k++)
                     {
                         var i = _tileOrder[k] % 8;
@@ -198,6 +199,7 @@ namespace ctpktool
             {
                 for (int x = 0; x < Width; x += 8)
                 {
+                    Console.WriteLine("Writing raw chunk {0}x{1}", x, y);
                     for (int k = 0; k < 8 * 8; k++)
                     {
                         var i = _tileOrder[k] % 8;
@@ -288,6 +290,7 @@ namespace ctpktool
 
         public Bitmap GetBitmap()
         {
+            Console.WriteLine("Creating bitmap...");
             var bmp = new Bitmap(Width, Height);
 
             switch (TextureFormat)
@@ -296,12 +299,14 @@ namespace ctpktool
                     break;
                 case TextureFormat.Etc1:
                 case TextureFormat.Etc1A4:
+                    Console.WriteLine("Getting ETC raster data...");
                     for (int y = 0; y < Height; y++)
                     {
                         Etc.GetEtc1RasterData(Data, new Size(Width, Height), y, HasAlpha, bmp, 0);
                     }
                     break;
                 default:
+                    Console.WriteLine("Getting plain raster data...");
                     GetPlainRasterData(bmp);
                     break;
             }

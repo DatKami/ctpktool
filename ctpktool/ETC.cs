@@ -226,16 +226,23 @@ namespace ctpktool
       int width = size.Width;
       int num1 = hasAlpha ? 8 : 0;
       Color[,] colorArray = new Color[4, 4];
+      MemoryStream dataStream = new MemoryStream(imageData);
+      BinaryReader reader = new BinaryReader(dataStream);
       int x = 0;
       while (x != width)
       {
         int index1 = y & 3;
         int etc1BlockStart = GetEtc1BlockStart(size, x, y, hasAlpha);
-        const ulong num2 = 0UL;
-        ulong num3 = !hasAlpha ? ulong.MaxValue : num2 | imageData[etc1BlockStart] | (ulong) imageData[etc1BlockStart + 1] << 8 | (ulong) imageData[etc1BlockStart + 2] << 16 | (ulong) imageData[etc1BlockStart + 3] << 24 | (ulong) imageData[etc1BlockStart + 4] << 32 | (ulong) imageData[etc1BlockStart + 5] << 40 | (ulong) imageData[etc1BlockStart + 6] << 48 | (ulong) imageData[etc1BlockStart + 7] << 56;
-        ulong num4 = 0UL | imageData[etc1BlockStart + num1] | (ulong) imageData[etc1BlockStart + num1 + 1] << 8 | (ulong) imageData[etc1BlockStart + num1 + 2] << 16 | (ulong) imageData[etc1BlockStart + num1 + 3] << 24 | (ulong) imageData[etc1BlockStart + num1 + 4] << 32 | (ulong) imageData[etc1BlockStart + num1 + 5] << 40 | (ulong) imageData[etc1BlockStart + num1 + 6] << 48 | (ulong) imageData[etc1BlockStart + num1 + 7] << 56;
-        bool flag1 = ((long) num4 & 4294967296L) != 0L;
-        bool flag2 = ((long) num4 & 8589934592L) != 0L;
+
+        reader.BaseStream.Seek(etc1BlockStart, SeekOrigin.Begin);
+
+        ulong original1 = reader.ReadUInt64(); //First 64 bits of the block
+        ulong original2 = reader.ReadUInt64(); //Second 64 bits of the block
+
+        ulong num3 = !hasAlpha ? ulong.MaxValue : original1; //If no alpha, all opacities are set to max, otherwise use the original 64 bits
+        ulong num4 = original2; //Contains color data
+        bool flag1 = ((long)num4 & 4294967296L) != 0L; //bit corrector
+        bool flag2 = ((long)num4 & 8589934592L) != 0L; //bit corrector; if always false causes severe corruption
         uint num5 = (uint) (num4 >> 37 & 7UL);
         uint num6 = (uint) (num4 >> 34 & 7UL);
         int num7;

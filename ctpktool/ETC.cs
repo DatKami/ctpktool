@@ -40,6 +40,10 @@ namespace ctpktool
         2U, 3U, 1U, 0U
     };
 
+    private static readonly bool debug = true;
+    private static readonly int xD = 444;
+    private static readonly int yD = 756;
+
     static Etc()
     {
     }
@@ -240,6 +244,20 @@ namespace ctpktool
         int num10;
         int num11;
         int num12;
+
+        if (debug && flag2 && x == xD && y < yD)
+        Console.Write("Last two bits of y: {0}\n{1}\n{2}\nFlag 1 (2/33): {3}; \tFlag 2 (2/34): {4}\n" +
+        "Num5(2/38-40): {5}\tNum6(2/35-37): {6}\n",
+        padLong(Convert.ToString(index1, 2), 2),
+        padLong(Convert.ToString((long)num3, 2), 64),
+        padLong(Convert.ToString((long)num4, 2), 64),
+        flag1,
+        flag2,
+        padLong(Convert.ToString((long)num5, 2), 3),
+        padLong(Convert.ToString((long)num6, 2), 3)
+        );
+
+
         if (flag2)
         {
           sbyte num13 = (sbyte) ((long) (num4 >> 56) & 7L);

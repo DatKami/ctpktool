@@ -360,23 +360,22 @@ namespace ctpktool
           {
             if (index3 == index1)
             {
-              uint num13 = (uint) (((int) (num28 >> num32) & 1) << 1 | (int) (num29 >> num32) & 1);
+              uint num13 = (((num28 >> num32) & 1) << 1 | (num29 >> num32) & 1);
               uint num14 = Unscramble[num13];
-              int num15 = num7 + CompressParams[(int) (IntPtr) num5, (int) (IntPtr) num14];
-              int num16 = num8 + CompressParams[(int) (IntPtr) num5, (int) (IntPtr) num14];
-              int num17 = num9 + CompressParams[(int) (IntPtr) num5, (int) (IntPtr) num14];
+              int num15 = num7 + CompressParams[num5, num14]; //why did we need to use int pointers?
+              int num16 = num8 + CompressParams[num5, num14];
+              int num17 = num9 + CompressParams[num5, num14];
               int red = Clamp(num15, 0, byte.MaxValue);
               int green = Clamp(num16, 0, byte.MaxValue);
               int blue = Clamp(num17, 0, byte.MaxValue);
               int num18 = index2 * 4 + index3;
-              int alpha = (int) ((long) (num3 >> num18 * 4) & 15L) * byte.MaxValue / 15;
+              int alpha = (int) ((num3 >> num18 * 4) & 15L) * byte.MaxValue / 15;
               colorArray[index3, index2] = Color.FromArgb(alpha, red, green, blue);
             }
             ++index3;
             ++num32;
           }
-          if (flag1)
-            num32 += 2;
+          if (flag1) num32 += 2;
         }
         int num33 = flag1 ? 0 : 2;
         int num34 = flag1 ? 2 : 0;
@@ -388,16 +387,16 @@ namespace ctpktool
           {
             if (index3 == index1)
             {
-              uint num13 = (uint) (((int) (num28 >> num35) & 1) << 1 | (int) (num29 >> num35) & 1);
+              uint num13 = (( (num28 >> num35) & 1) << 1 | (num29 >> num35) & 1);
               uint num14 = Unscramble[num13];
-              int num15 = num10 + CompressParams[(int) (IntPtr) num6, (int) (IntPtr) num14];
-              int num16 = num11 + CompressParams[(int) (IntPtr) num6, (int) (IntPtr) num14];
-              int num17 = num12 + CompressParams[(int) (IntPtr) num6, (int) (IntPtr) num14];
+              int num15 = num10 + CompressParams[num6, num14]; //same here
+              int num16 = num11 + CompressParams[num6, num14];
+              int num17 = num12 + CompressParams[num6, num14];
               int red = Clamp(num15, 0, byte.MaxValue);
               int green = Clamp(num16, 0, byte.MaxValue);
               int blue = Clamp(num17, 0, byte.MaxValue);
               int num18 = index2 * 4 + index3;
-              int alpha = (int) ((long) (num3 >> num18 * 4) & 15L) * byte.MaxValue / 15;
+              int alpha = (int) ((num3 >> num18 * 4) & 15L) * byte.MaxValue / 15;
               colorArray[index3, index2] = Color.FromArgb(alpha, red, green, blue);
             }
             ++index3;
@@ -421,6 +420,12 @@ namespace ctpktool
         if (max < value)
             return max;
         return value;
+    }
+
+    public static void writeToArgb(uint data1, uint data2, int offset, int preRed, int preGreen, int preBlue, int adjustor, int alphaOffset, long alphaData, Color[,] colorArray)
+    {
+      uint toUnscramble = (((data1 >> offset) & 1) << 1 | (data2 >> offset) & 1);
+      uint unscrambled = Unscramble[toUnscramble];
     }
 
     public static String padLong(string binaryString, int toPad)

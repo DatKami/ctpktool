@@ -296,7 +296,7 @@ namespace ctpktool
           int num23 = (int) (num4 >> 51) & 31;
           int num24 = (int) (num4 >> 43) & 31;
 
-          if (x == 444 && y < 756)
+          if (debug && x == xD && y < yD)
           {
             Console.Write("Num22 (2/60-64)\t: {0}\t{1}\n", num22, "###" + padLong(Convert.ToString(num22, 2), 5));
             Console.Write("Num23 (2/52-56)\t: {0}\t{1}\n", num23, "###" + padLong(Convert.ToString(num23, 2), 5));
@@ -307,7 +307,7 @@ namespace ctpktool
           int num26 = num23 + num20;
           int num27 = num24 + num21;
 
-          if (x == 444 && y < 756)
+          if (debug && x == xD && y < yD)
           {
             Console.Write("Num25 22+19\t: {0}\t{1}\n", num25, padLong(Convert.ToString(num25, 2), 8));
             Console.Write("Num26 23+20\t: {0}\t{1}\n", num26, padLong(Convert.ToString(num26, 2), 8));
@@ -321,7 +321,7 @@ namespace ctpktool
           num11 = num26 * byte.MaxValue / 31;
           num12 = num27 * byte.MaxValue / 31;
 
-          if (x == 444 && y < 756)
+          if (debug && x == xD && y < yD)
           {
             Console.WriteLine();
             Console.Write("Num07 22*255/31\t: {0}\t{1}\n", num7, padLong(Convert.ToString(num7, 2), 8));

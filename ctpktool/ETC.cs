@@ -360,6 +360,7 @@ namespace ctpktool
           {
             if (index3 == index1)
             {
+              /*
               uint num13 = (((num28 >> num32) & 1) << 1 | (num29 >> num32) & 1);
               uint num14 = Unscramble[num13];
               int num15 = num7 + CompressParams[num5, num14]; //why did we need to use int pointers?
@@ -371,6 +372,9 @@ namespace ctpktool
               int num18 = index2 * 4 + index3;
               int alpha = (int) ((num3 >> num18 * 4) & 15L) * byte.MaxValue / 15;
               colorArray[index3, index2] = Color.FromArgb(alpha, red, green, blue);
+              */
+              writeToArgb(num28, num29, num32, num7, num8, num9, num5,
+                          num3, colorArray, index3, index2);
             }
             ++index3;
             ++num32;
@@ -387,6 +391,7 @@ namespace ctpktool
           {
             if (index3 == index1)
             {
+              /*
               uint num13 = (( (num28 >> num35) & 1) << 1 | (num29 >> num35) & 1);
               uint num14 = Unscramble[num13];
               int num15 = num10 + CompressParams[num6, num14]; //same here
@@ -398,6 +403,9 @@ namespace ctpktool
               int num18 = index2 * 4 + index3;
               int alpha = (int) ((num3 >> num18 * 4) & 15L) * byte.MaxValue / 15;
               colorArray[index3, index2] = Color.FromArgb(alpha, red, green, blue);
+              */
+              writeToArgb(num28, num29, num35, num10, num11, num12, num6,
+                          num3, colorArray, index3, index2);
             }
             ++index3;
             ++num35;
@@ -422,10 +430,23 @@ namespace ctpktool
         return value;
     }
 
-    public static void writeToArgb(uint data1, uint data2, int offset, int preRed, int preGreen, int preBlue, int adjustor, int alphaOffset, long alphaData, Color[,] colorArray)
+    public static void writeToArgb( uint data1, uint data2, int offset, 
+                                    int preRed, int preGreen, int preBlue, 
+                                    uint adjustor, ulong alphaData, Color[,] colorArray,
+                                    int x, int y)
     {
       uint toUnscramble = (((data1 >> offset) & 1) << 1 | (data2 >> offset) & 1);
       uint unscrambled = Unscramble[toUnscramble];
+      int compressed = CompressParams[adjustor, unscrambled];
+      int midRed    = preRed    + compressed;
+      int midGreen  = preGreen  + compressed;
+      int midBlue   = preBlue   + compressed;
+      int red       = Clamp(midRed,   0, byte.MaxValue);
+      int green     = Clamp(midGreen, 0, byte.MaxValue);
+      int blue      = Clamp(midBlue,  0, byte.MaxValue);
+      int num18 = y * 4 + x;
+      int alpha = (int)((alphaData >> num18 * 4) & 15L) * byte.MaxValue / 15;
+      colorArray[x, y] = Color.FromArgb(alpha, red, green, blue);
     }
 
     public static String padLong(string binaryString, int toPad)

@@ -354,14 +354,14 @@ namespace ctpktool
         }
         uint data1 = (uint) (num4 >> 16 & ushort.MaxValue); //bits 17-32 from the right
         uint data2 = (uint) (num4 & ushort.MaxValue); //bits 1-16 from the right
-        int limitOfY = flag1 ? 4 : 2; //limit of the y coord
-        int limitOfX = flag1 ? 2 : 4; //limit of the x coord
+        int limitOfX = flag1 ? 4 : 2; //limit of the y coord
+        int limitOfY = flag1 ? 2 : 4; //limit of the x coord//compensate for only 2 per line
         int offset = 0; //offset of the bits to compress in the data
-        for (int coordY = 0; coordY != limitOfY; ++coordY) // loop thru rows; y coords
+        for (int coordX = 0; coordX != limitOfX; ++coordX) // loop thru rows; y coords
         {
-          for (int coordX = 0; coordX != limitOfX; ++coordX) // loop thru columns; x coords
+          for (int coordY = 0; coordY != limitOfY; ++coordY) // loop thru columns; x coords
           {
-            if (coordX == yRemainder) // index 1 is the last two bits of the y in the actual pic, dec 0-3
+            if (coordY == yRemainder) // index 1 is the last two bits of the y in the actual pic, dec 0-3
             {
               writeToArgb(data1, data2, offset, num7, num8, num9, num5,
                           num3, colorArray, coordX, coordY);
@@ -370,14 +370,14 @@ namespace ctpktool
           }
           if (flag1) offset += 2; //compensate for only 2 per line
         }
-        int startOfY = flag1 ? 0 : 2; // start of the y coord
-        int startOfX = flag1 ? 2 : 0; // start of the x coord
+        int startOfX = flag1 ? 0 : 2; // start of the y coord
+        int startOfY = flag1 ? 2 : 0; // start of the x coord
         int offset2 = flag1 ? 2 : 8; //offset of the bits to compress in the data
-        for (int coordY = startOfY; coordY != 4; ++coordY) // loop thru rows; y coords
+        for (int coordX = startOfX; coordX != 4; ++coordX) // loop thru rows; y coords
         {
-          for (int coordX = startOfX; coordX != 4; ++coordX)
+          for (int coordY = startOfY; coordY != 4; ++coordY)
           {
-            if (coordX == yRemainder)  // index 1 is the last two bits of the y in the actual pic, dec 0-3
+            if (coordY == yRemainder)  // index 1 is the last two bits of the y in the actual pic, dec 0-3//compensate for only 2 per line
             {
               writeToArgb(data1, data2, offset2, num10, num11, num12, num6,
                           num3, colorArray, coordX, coordY);
@@ -415,9 +415,10 @@ namespace ctpktool
       int red       = Clamp(midRed,   0, byte.MaxValue);
       int green     = Clamp(midGreen, 0, byte.MaxValue);
       int blue      = Clamp(midBlue,  0, byte.MaxValue);
-      int num18 = y * 4 + x;
+      //int num18 = y * 4 + x;
+      int num18 = x * 4 + y;
       int alpha = convertBits(((alphaData >> num18 * 4) & 15L), 15, 255);
-      colorArray[x, y] = Color.FromArgb(alpha, red, green, blue);
+      colorArray[y, x] = Color.FromArgb(alpha, red, green, blue);
     }
 
     public static String padLong(string binaryString, int toPad)

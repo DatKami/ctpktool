@@ -321,12 +321,12 @@ namespace ctpktool
             Console.Write("Num27 24+21\t: {0}\t{1}\n", num27, padLong(Convert.ToString(num27, 2), 8));
           }
 
-          num7 = num22 * byte.MaxValue / 31;
-          num8 = num23 * byte.MaxValue / 31;
-          num9 = num24 * byte.MaxValue / 31;
-          num10 = num25 * byte.MaxValue / 31;
-          num11 = num26 * byte.MaxValue / 31;
-          num12 = num27 * byte.MaxValue / 31;
+          num7 =  convertBits(num22, 31, 255);
+          num8 =  convertBits(num23, 31, 255);
+          num9 =  convertBits(num24, 31, 255);
+          num10 = convertBits(num25, 31, 255);
+          num11 = convertBits(num26, 31, 255);
+          num12 = convertBits(num27, 31, 255);
 
           if (debug && x == xD && y < yD)
           {
@@ -341,50 +341,46 @@ namespace ctpktool
         }
         else
         {
-          num7 = (int) ((num4 >> 60 & 15UL) * byte.MaxValue / 15UL);
-          num10 = (int) ((num4 >> 56 & 15UL) * byte.MaxValue / 15UL);
-          num8 = (int) ((num4 >> 52 & 15UL) * byte.MaxValue / 15UL);
-          num11 = (int) ((num4 >> 48 & 15UL) * byte.MaxValue / 15UL);
-          num9 = (int) ((num4 >> 44 & 15UL) * byte.MaxValue / 15UL);
-          num12 = (int) ((num4 >> 40 & 15UL) * byte.MaxValue / 15UL);
+          num7 = convertBits((num4 >> 60 & 15UL), 15, 255);
+          num10 = convertBits((num4 >> 56 & 15UL), 15, 255);
+          num8 = convertBits((num4 >> 52 & 15UL), 15, 255);
+          num11 = convertBits((num4 >> 48 & 15UL), 15, 255);
+          num9 = convertBits((num4 >> 44 & 15UL), 15, 255);
+          num12 = convertBits((num4 >> 40 & 15UL), 15, 255);
         }
         uint data1 = (uint) (num4 >> 16 & ushort.MaxValue); //bits 17-32 from the right
         uint data2 = (uint) (num4 & ushort.MaxValue); //bits 1-16 from the right
         int limitOfY = flag1 ? 4 : 2; //limit of the y coord
         int limitOfX = flag1 ? 2 : 4; //limit of the x coord
-        int offset = 0;
-        for (int coordY = 0; coordY != limitOfY; ++coordY)
+        int offset = 0; //offset of the bits to compress in the data
+        for (int coordY = 0; coordY != limitOfY; ++coordY) // loop thru rows; y coords
         {
-          int coordX = 0;
-          while (coordX != limitOfX)
+          for (int coordX = 0; coordX != limitOfX; ++coordX) // loop thru columns; x coords
           {
-            if (coordX == index1)
+            if (coordX == index1) // index 1 is the last two bits of the y in the actual pic, dec 0-3
             {
               writeToArgb(data1, data2, offset, num7, num8, num9, num5,
                           num3, colorArray, coordX, coordY);
             }
-            ++coordX;
             ++offset;
           }
           if (flag1) offset += 2;
         }
-        int num33 = flag1 ? 0 : 2;
-        int num34 = flag1 ? 2 : 0;
-        int num35 = flag1 ? 2 : 8;
-        for (int index2 = num33; index2 != 4; ++index2)
+        int startOfY = flag1 ? 0 : 2; // start of the y coord
+        int startOfX = flag1 ? 2 : 0; // start of the x coord
+        int offset2 = flag1 ? 2 : 8; //offset of the bits to compress in the data
+        for (int coordY = startOfY; coordY != 4; ++coordY) // loop thru rows; y coords
         {
-          int index3 = num34;
-          while (index3 != 4)
+          for (int coordX = startOfX; coordX != 4; ++coordX)
           {
-            if (index3 == index1)
+            if (coordX == index1)
             {
-              writeToArgb(data1, data2, num35, num10, num11, num12, num6,
-                          num3, colorArray, index3, index2);
+              writeToArgb(data1, data2, offset2, num10, num11, num12, num6,
+                          num3, colorArray, coordX, coordY);
             }
-            ++index3;
-            ++num35;
+            ++offset2;
           }
-          if (flag1) num35 += 2;
+          if (flag1) offset2 += 2;
         }
         bmp.SetPixel(x, y, colorArray[index1, 0]);
         bmp.SetPixel(x + 1, y, colorArray[index1, 1]);
@@ -416,7 +412,7 @@ namespace ctpktool
       int green     = Clamp(midGreen, 0, byte.MaxValue);
       int blue      = Clamp(midBlue,  0, byte.MaxValue);
       int num18 = y * 4 + x;
-      int alpha = (int)((alphaData >> num18 * 4) & 15L) * byte.MaxValue / 15;
+      int alpha = convertBits(((alphaData >> num18 * 4) & 15L), 15, 255);
       colorArray[x, y] = Color.FromArgb(alpha, red, green, blue);
     }
 
@@ -434,5 +430,9 @@ namespace ctpktool
       }
       return curString;
     }
+
+    public static int convertBits(int value, int from, int to) { return (int)(from < to ? value * to / from : Math.Ceiling((double)value * (double)to / (double)from)); }
+    public static int convertBits(ulong value, int from, int to) { return (int)(from < to ? (int)value * to / from : Math.Ceiling((double)value * (double)to / (double)from)); }
+    public static int convertBits(uint value, int from, int to) { return (int)(from < to ? value * to / from : Math.Ceiling((double)value * (double)to / (double)from)); }
   }
 }

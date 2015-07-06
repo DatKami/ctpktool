@@ -231,7 +231,7 @@ namespace ctpktool
       int x = 0;
       while (x != width)
       {
-        int index1 = y & 3;
+        int yRemainder = y & 3;
         int etc1BlockStart = GetEtc1BlockStart(size, x, y, hasAlpha);
 
         reader.BaseStream.Seek(etc1BlockStart, SeekOrigin.Begin);
@@ -254,10 +254,11 @@ namespace ctpktool
 
         if (flag2)
         {
+          /*
           if (debug && x == xD && y < yD)
             Console.Write("Last two bits of y: {0}\n{1}\n{2}\nFlag 1 (2/33): {3}; \tFlag 2 (2/34): {4}\n" +
             "Num5(2/38-40): {5}\tNum6(2/35-37): {6}\n",
-            padLong(Convert.ToString(index1, 2), 2),
+            padLong(Convert.ToString(yRemainder, 2), 2),
             padLong(Convert.ToString((long)num3, 2), 64),
             padLong(Convert.ToString((long)num4, 2), 64),
             flag1,
@@ -265,11 +266,11 @@ namespace ctpktool
             padLong(Convert.ToString((long)num5, 2), 3),
             padLong(Convert.ToString((long)num6, 2), 3)
             );
-
+          */
           sbyte num13 = (sbyte) ((long) (num4 >> 56) & 7L);
           sbyte num14 = (sbyte) ((long) (num4 >> 48) & 7L);
           sbyte num15 = (sbyte) ((long) (num4 >> 40) & 7L);
-
+          /*
           if (debug && x == xD && y < yD)
           {
             Console.WriteLine();
@@ -277,57 +278,59 @@ namespace ctpktool
             Console.Write("Num14 (2/49-51)\t: {0}\t{1}\n", num14, padLong(Convert.ToString(num14, 2), 3));
             Console.Write("Num15 (2/41-43)\t: {0}\t{1}\n", num15, padLong(Convert.ToString(num15, 2), 3));
           }
+          */
           sbyte num16 = (sbyte) (num13 << 5);
           sbyte num17 = (sbyte) (num14 << 5);
           sbyte num18 = (sbyte) (num15 << 5);
-
+          /*
           if (debug && x == xD && y < yD)
           {
             Console.Write("Num16 Lshift\t: {0}\t{1}\n", num16, padLong(Convert.ToString(num16, 2), 8));
             Console.Write("Num17 Lshift\t: {0}\t{1}\n", num17, padLong(Convert.ToString(num17, 2), 8));
             Console.Write("Num18 Lshift\t: {0}\t{1}\n", num18, padLong(Convert.ToString(num18, 2), 8));
           }
-
+          */
           sbyte num19 = (sbyte) (num16 >> 5);
           sbyte num20 = (sbyte) (num17 >> 5);
           sbyte num21 = (sbyte) (num18 >> 5);
-
+          /*
           if (debug && x == xD && y < yD)
           {
             Console.Write("Num19 Rshift\t: {0}\t{1}\n", num19, padLong(Convert.ToString(num19, 2), 8));
             Console.Write("Num20 Rshift\t: {0}\t{1}\n", num20, padLong(Convert.ToString(num20, 2), 8));
             Console.Write("Num21 Rshift\t: {0}\t{1}\n", num21, padLong(Convert.ToString(num21, 2), 8));
           }
-
+          */
           int num22 = (int) (num4 >> 59) & 31;
           int num23 = (int) (num4 >> 51) & 31;
           int num24 = (int) (num4 >> 43) & 31;
-
+          /*
           if (debug && x == xD && y < yD)
           {
             Console.Write("Num22 (2/60-64)\t: {0}\t{1}\n", num22, "###" + padLong(Convert.ToString(num22, 2), 5));
             Console.Write("Num23 (2/52-56)\t: {0}\t{1}\n", num23, "###" + padLong(Convert.ToString(num23, 2), 5));
             Console.Write("Num24 (2/44-48)\t: {0}\t{1}\n", num24, "###" + padLong(Convert.ToString(num24, 2), 5));
           }
-
+          */
           int num25 = num22 + num19;
           int num26 = num23 + num20;
           int num27 = num24 + num21;
-
+          /*
           if (debug && x == xD && y < yD)
           {
             Console.Write("Num25 22+19\t: {0}\t{1}\n", num25, padLong(Convert.ToString(num25, 2), 8));
             Console.Write("Num26 23+20\t: {0}\t{1}\n", num26, padLong(Convert.ToString(num26, 2), 8));
             Console.Write("Num27 24+21\t: {0}\t{1}\n", num27, padLong(Convert.ToString(num27, 2), 8));
           }
-
+          */
           num7 =  convertBits(num22, 31, 255);
           num8 =  convertBits(num23, 31, 255);
           num9 =  convertBits(num24, 31, 255);
           num10 = convertBits(num25, 31, 255);
           num11 = convertBits(num26, 31, 255);
           num12 = convertBits(num27, 31, 255);
-
+          
+          /*
           if (debug && x == xD && y < yD)
           {
             Console.WriteLine();
@@ -338,6 +341,7 @@ namespace ctpktool
             Console.Write("Num11 26*255/31\t: {0}\t{1}\n", num11, padLong(Convert.ToString(num11, 2), 8));
             Console.Write("Num12 27*255/31\t: {0}\t{1}\n", num12, padLong(Convert.ToString(num12, 2), 8));
           }
+          */
         }
         else
         {
@@ -357,14 +361,14 @@ namespace ctpktool
         {
           for (int coordX = 0; coordX != limitOfX; ++coordX) // loop thru columns; x coords
           {
-            if (coordX == index1) // index 1 is the last two bits of the y in the actual pic, dec 0-3
+            if (coordX == yRemainder) // index 1 is the last two bits of the y in the actual pic, dec 0-3
             {
               writeToArgb(data1, data2, offset, num7, num8, num9, num5,
                           num3, colorArray, coordX, coordY);
             }
             ++offset;
           }
-          if (flag1) offset += 2;
+          if (flag1) offset += 2; //compensate for only 2 per line
         }
         int startOfY = flag1 ? 0 : 2; // start of the y coord
         int startOfX = flag1 ? 2 : 0; // start of the x coord
@@ -373,19 +377,19 @@ namespace ctpktool
         {
           for (int coordX = startOfX; coordX != 4; ++coordX)
           {
-            if (coordX == index1)
+            if (coordX == yRemainder)  // index 1 is the last two bits of the y in the actual pic, dec 0-3
             {
               writeToArgb(data1, data2, offset2, num10, num11, num12, num6,
                           num3, colorArray, coordX, coordY);
             }
             ++offset2;
           }
-          if (flag1) offset2 += 2;
+          if (flag1) offset2 += 2; //compensate for only 2 per line
         }
-        bmp.SetPixel(x, y, colorArray[index1, 0]);
-        bmp.SetPixel(x + 1, y, colorArray[index1, 1]);
-        bmp.SetPixel(x + 2, y, colorArray[index1, 2]);
-        bmp.SetPixel(x + 3, y, colorArray[index1, 3]);
+        bmp.SetPixel(x, y, colorArray[yRemainder, 0]);
+        bmp.SetPixel(x + 1, y, colorArray[yRemainder, 1]);
+        bmp.SetPixel(x + 2, y, colorArray[yRemainder, 2]);
+        bmp.SetPixel(x + 3, y, colorArray[yRemainder, 3]);
         x += 4;
       }
     }
